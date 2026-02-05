@@ -1,0 +1,345 @@
+<Window xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:pacstallion.ViewModels"
+    xmlns:models="using:pacstallion.Models"
+    xmlns:conv="using:pacstallion.Converters"
+    x:Class="pacstallion.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    Icon="/Assets/pgm.ico"
+    Title="PGM"
+    TransparencyLevelHint="AcrylicBlur"
+    Background="Transparent"
+    ExtendClientAreaToDecorationsHint="True">
+
+  <Window.Resources>
+    <conv:BoolToBrushConverter x:Key="BoolToBrushConverter"/>
+
+    <SolidColorBrush x:Key="AccentBrush" Color="#3399FF"/>
+    <SolidColorBrush x:Key="AccentLightBrush" Color="#2A3399FF"/>
+    <SolidColorBrush x:Key="PanelBackground" Color="#1A000000"/>
+    <SolidColorBrush x:Key="SeparatorBrush" Color="#1FFFFFFF"/>
+    <SolidColorBrush x:Key="PositiveBrush" Color="#00FF00"/>
+    <SolidColorBrush x:Key="PositiveLightBrush" Color="#2A00FF00"/>
+    <SolidColorBrush x:Key="NegativeBrush" Color="#FF5555"/>
+    <SolidColorBrush x:Key="NegativeLightBrush" Color="#2AFF0000"/>
+    <SolidColorBrush x:Key="InfoTextBrush" Color="#CCCCCC"/>
+    <SolidColorBrush x:Key="MutedBrush" Color="Gray"/>
+
+    <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
+    <Thickness x:Key="CardPadding">12</Thickness>
+  </Window.Resources>
+
+  <Window.Styles>
+    <Style Selector="TextBox.searchBox">
+      <Setter Property="Width" Value="0"/>
+      <Setter Property="Opacity" Value="0"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Transitions">
+    <Transitions>
+      <DoubleTransition Property="Width" Duration="0:0:0.25" Easing="CubicEaseOut"/>
+      <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+    </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="TextBox.searchBox[IsVisible=True]">
+      <Setter Property="Width" Value="200"/>
+      <Setter Property="Opacity" Value="1"/>
+      <Setter Property="Margin" Value="0,0,10,0"/>
+    </Style>
+
+    <Style Selector="Button.iconBtn">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Padding" Value="8"/>
+    </Style>
+
+    <Style Selector="Button.actionBtn">
+      <Setter Property="Padding" Value="24,8"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style Selector="TextBlock.detailHeader">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Opacity" Value="0.5"/>
+      <Setter Property="Margin" Value="0,10,0,2"/>
+    </Style>
+
+    <Style Selector="PathIcon">
+      <Setter Property="Width" Value="18"/>
+      <Setter Property="Height" Value="18"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+  </Window.Styles>
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <Panel>
+    <ExperimentalAcrylicBorder IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+    <ExperimentalAcrylicMaterial BackgroundSource="Digger"
+                     TintColor="Black"
+                     TintOpacity="1"
+                     MaterialOpacity="0.75" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+
+    <Grid RowDefinitions="Auto, *, Auto" Margin="20,40,20,20">
+      <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,20">
+    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+      <TextBlock Text="Pacstall GUI Manager"
+             FontSize="20"
+             FontWeight="Bold"
+             Foreground="White"/>
+      <TextBlock Text="{Binding StatusMessage}"
+             Foreground="{StaticResource MutedBrush}"
+             FontSize="11"/>
+    </StackPanel>
+
+    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+      <TextBox Classes="searchBox"
+           Text="{Binding SearchText}"
+           Watermark="Search packages..."
+           IsVisible="{Binding IsSearchOpen}"/>
+
+      <Button Command="{Binding ToggleSearchCommand}" Classes="iconBtn">
+        <PathIcon Data="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </Button>
+
+      <Button Command="{Binding FetchPackagesCommand}"
+          IsEnabled="{Binding !IsLoading}"
+          Classes="iconBtn"
+          ToolTip.Tip="Refresh List">
+        <PathIcon Data="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+      </Button>
+
+      <Button Command="{Binding ToggleInstalledFilterCommand}"
+          Classes="iconBtn"
+          ToolTip.Tip="Show Installed Only">
+        <PathIcon Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"
+             Foreground="{Binding ShowInstalledOnly, Converter={StaticResource BoolToBrushConverter}}"/>
+      </Button>
+    </StackPanel>
+      </Grid>
+
+      <ProgressBar Grid.Row="0"
+           VerticalAlignment="Bottom"
+           IsIndeterminate="True"
+           IsVisible="{Binding IsLoading}"
+           Height="2"
+           Margin="0,5,0,0"/>
+
+      <Grid Grid.Row="1" ColumnDefinitions="*, 1.5*" Margin="0,10">
+    <ListBox Grid.Column="0"
+         ItemsSource="{Binding Packages}"
+         SelectedItem="{Binding SelectedPackage}"
+         Background="{StaticResource PanelBackground}"
+         CornerRadius="{StaticResource CardCornerRadius}"
+         Margin="0,0,10,0">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="models:PacstallPackage">
+          <Border Padding="{StaticResource CardPadding}"
+              BorderBrush="{StaticResource SeparatorBrush}"
+              BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="*, Auto">
+          <StackPanel Grid.Column="0" Spacing="2">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="{Binding Name}"
+                 FontWeight="SemiBold"
+                 Foreground="{StaticResource AccentBrush}"
+                 FontSize="15"/>
+
+              <Border Background="{StaticResource PositiveLightBrush}"
+                  CornerRadius="4"
+                  Padding="6,1"
+                  IsVisible="{Binding IsInstalled}"
+                  VerticalAlignment="Center">
+            <TextBlock Text="Installed" FontSize="10" Foreground="{StaticResource PositiveBrush}"/>
+              </Border>
+
+              <Border Background="{StaticResource NegativeLightBrush}"
+                  CornerRadius="4"
+                  Padding="6,1"
+                  IsVisible="{Binding IsUpdateAvailable}"
+                  VerticalAlignment="Center">
+            <TextBlock Text="Update Available" FontSize="10" Foreground="{StaticResource NegativeBrush}"/>
+              </Border>
+            </StackPanel>
+
+            <TextBlock Text="{Binding Description}"
+                   FontSize="12"
+                   Foreground="{StaticResource InfoTextBrush}"
+                   TextWrapping="Wrap"
+                   MaxLines="2"/>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding Version}" FontSize="11" Foreground="Gray" HorizontalAlignment="Right"/>
+          </StackPanel>
+        </Grid>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <Border Grid.Column="1"
+        Background="{StaticResource PanelBackground}"
+        CornerRadius="{StaticResource CardCornerRadius}"
+        Padding="20">
+      <Panel>
+        <TextBlock Text="Select a package to see details"
+               IsVisible="{Binding SelectedPackage, Converter={x:Static ObjectConverters.IsNull}}"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"
+               Opacity="0.5"/>
+
+        <ProgressBar IsIndeterminate="True"
+             VerticalAlignment="Top"
+             IsVisible="{Binding IsDetailsLoading}"
+             Height="2"/>
+
+        <ScrollViewer IsVisible="{Binding SelectedDetails, Converter={x:Static ObjectConverters.IsNotNull}}">
+          <StackPanel Spacing="15">
+        <TextBlock Text="{Binding SelectedDetails.PrettyName}"
+               IsVisible="{Binding SelectedDetails.PrettyName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+               FontSize="22"
+               FontWeight="Bold"
+               Foreground="{StaticResource AccentBrush}"
+               Padding="0,10,0,0"/>
+
+        <TextBlock Text="{Binding SelectedDetails.PackageName}"
+               FontSize="22"
+               FontWeight="Bold"
+               Foreground="{StaticResource AccentBrush}"
+               Padding="0,10,0,0"
+               IsVisible="{Binding SelectedDetails.PrettyName, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
+
+        <TextBlock Text="{Binding SelectedDetails.PackageName}"
+               FontSize="12"
+               Opacity="0.4"
+               Margin="0,-10,0,0"
+               IsVisible="{Binding SelectedDetails.PrettyName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+        <TextBlock Text="{Binding SelectedDetails.Description}"
+               TextWrapping="Wrap"
+               FontSize="14"/>
+
+        <Grid ColumnDefinitions="*, *" Margin="0,10">
+          <StackPanel Grid.Column="0" Spacing="5">
+            <TextBlock Text="Version" Classes="detailHeader"/>
+            <StackPanel Orientation="Horizontal" Spacing="5">
+              <TextBlock Text="{Binding SelectedDetails.Version}"/>
+              <TextBlock Text="{Binding SelectedPackage.LocalVersion, StringFormat='(Local: {0})'}"
+                 IsVisible="{Binding SelectedPackage.IsUpdateAvailable}"
+                 FontSize="11"
+                 Foreground="{StaticResource NegativeBrush}"
+                 VerticalAlignment="Bottom"/>
+            </StackPanel>
+
+            <TextBlock Text="Architectures" Classes="detailHeader" IsVisible="{Binding SelectedDetails.Architectures, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+            <TextBlock Text="{Binding SelectedDetails.ArchDisplay}" IsVisible="{Binding SelectedDetails.Architectures, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1" Spacing="5">
+            <TextBlock Text="Maintainer" Classes="detailHeader"/>
+            <ItemsControl ItemsSource="{Binding SelectedDetails.Maintainers}">
+              <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" FontSize="12"/>
+            </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Grid>
+
+        <StackPanel Spacing="5" IsVisible="{Binding SelectedDetails.Homepage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+          <TextBlock Text="Homepage" Classes="detailHeader"/>
+          <TextBlock Text="{Binding SelectedDetails.Homepage}"
+                 Foreground="{StaticResource AccentBrush}"
+                 Cursor="Hand"
+                 PointerPressed="Homepage_PointerPressed"/>
+        </StackPanel>
+
+        <StackPanel Spacing="10" IsVisible="{Binding SelectedDetails.HasDependencies}">
+          <TextBlock Text="Dependencies" FontWeight="Bold" Margin="0,10,0,0"/>
+
+          <TextBlock Text="Pacstall" FontSize="11" Opacity="0.5" IsVisible="{Binding SelectedDetails.PacstallDependencies.Count}"/>
+          <ItemsControl ItemsSource="{Binding SelectedDetails.PacstallDependencies}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+            <Border Background="{StaticResource PositiveLightBrush}" CornerRadius="4" Padding="6,2" Margin="0,0,5,5">
+              <TextBlock Text="{Binding Value}" FontSize="12"/>
+            </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <TextBlock Text="Runtime" FontSize="11" Opacity="0.5" IsVisible="{Binding SelectedDetails.RuntimeDependencies.Count}"/>
+          <ItemsControl ItemsSource="{Binding SelectedDetails.RuntimeDependencies}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+            <Border Background="#2AFFFFFF" CornerRadius="4" Padding="6,2" Margin="0,0,5,5">
+              <TextBlock Text="{Binding Value}" FontSize="12"/>
+            </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <TextBlock Text="Build" FontSize="11" Opacity="0.5" IsVisible="{Binding SelectedDetails.BuildDependencies.Count}"/>
+          <ItemsControl ItemsSource="{Binding SelectedDetails.BuildDependencies}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+            <Border Background="#6200FFFF" CornerRadius="4" Padding="6,2" Margin="0,0,5,5">
+              <TextBlock Text="{Binding Value}" FontSize="12"/>
+            </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,20,0,0">
+          <Button Classes="actionBtn"
+              Command="{Binding InstallPackageCommand}"
+              IsVisible="{Binding !SelectedPackage.IsInstalled}"
+              IsEnabled="{Binding !IsLoading}"
+              Content="Install"
+              Background="{StaticResource PositiveLightBrush}"
+              Foreground="{StaticResource PositiveBrush}"/>
+
+          <Button Classes="actionBtn"
+              Command="{Binding InstallPackageCommand}"
+              IsVisible="{Binding SelectedPackage.IsUpdateAvailable}"
+              IsEnabled="{Binding !IsLoading}"
+              Content="Update"
+              Background="{StaticResource AccentLightBrush}"
+              Foreground="{StaticResource AccentBrush}"/>
+
+          <Button Classes="actionBtn"
+              Command="{Binding UninstallPackageCommand}"
+              IsVisible="{Binding SelectedPackage.IsInstalled}"
+              IsEnabled="{Binding !IsLoading}"
+              Content="Uninstall"
+              Background="{StaticResource NegativeLightBrush}"
+              Foreground="{StaticResource NegativeBrush}"/>
+        </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </Panel>
+    </Border>
+      </Grid>
+    </Grid>
+  </Panel>
+</Window>
