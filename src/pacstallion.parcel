@@ -1,0 +1,32 @@
+{
+    "GeneralSettings": {
+        "NetProjectPath": "pacstallion.csproj",
+        "ApplicationName": "pacstallion",
+        "Version": "1.0.0",
+        "PackageName": {
+            "$type": "msbuild",
+            "property": "AssemblyName"
+        },
+        "AssemblyName": {
+            "$type": "msbuild",
+            "property": "AssemblyName"
+        }
+    },
+    "LinuxSettings": {
+        "AppIcon": "Assets/pgm.png",
+        "CreateBinSymlink": "True",
+        "DesktopCategory": "System"
+    },
+    "Win32Settings": {
+        "IncludeUninstaller": "True"
+    },
+    "MacOsSettings": {
+        "CreateBundle": true,
+        "BundleIdentifier": "com.CompanyName.pacstallion",
+        "SigningCredentialsType": "AdHoc"
+    },
+    "PublishSettings": {
+        "PublishSingleFile": "True",
+        "ExtraBuildProperties": {}
+    }
+}
