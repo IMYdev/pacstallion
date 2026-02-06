@@ -2,7 +2,7 @@
     "GeneralSettings": {
         "NetProjectPath": "pacstallion.csproj",
         "ApplicationName": "pacstallion",
-        "Version": "1.0.0",
+        "Version": "1.0.1",
         "PackageName": {
             "$type": "msbuild",
             "property": "AssemblyName"
