@@ -12,7 +12,7 @@
 ---
 
 ## Installation
-Grab a [release](https://github.com/IMYdev/pacstallion/releases/) from here or [build yourself](#building).
+Grab a [release](https://github.com/IMYdev/pacstallion/releases/) or [build yourself](#building).
 
 ## Building
 **[.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)** is required for developing this application.
